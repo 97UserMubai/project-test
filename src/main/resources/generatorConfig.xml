@@ -20,7 +20,7 @@
 
         <!--jdbc的数据库连接 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/test"
+                        connectionURL="jdbc:mysql://168.168.3.210:3306/jwd_iec"
                         userId="root"
                         password="123456">
         </jdbcConnection>
@@ -68,6 +68,9 @@
         <!--tableName:指定了表名
             domainObjectName:指定了实体类的名称
         -->
-        <table tableName="student" domainObjectName="Student"/>
+        <table tableName="iec_sms_sign" domainObjectName="IecSmsSign"/>
+        <table tableName="iec_sms_template" domainObjectName="IecSmsTemplate"/>
+        <table tableName="iec_sms_task" domainObjectName="IecSmsTask"/>
+        <table tableName="iec_sms_feedback" domainObjectName="IecSmsFeedback"/>
     </context>
 </generatorConfiguration>
