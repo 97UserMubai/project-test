@@ -36,5 +36,13 @@ public class DateTest {
         System.out.println("今天是：" + LocalDate.now().toString());
         System.out.println("王狗子和沈咸鱼的恋爱已经" + (LocalDate.now().toEpochDay() - loveDate.toEpochDay()) + "天了");
     }
+    @Test
+    public void testHourCompare(){
+        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime1 = localDateTime.minusHours(2);
+        long compareSeconds = localDateTime.toEpochSecond(OffsetDateTime.now().getOffset())
+                - localDateTime1.toEpochSecond(OffsetDateTime.now().getOffset());
+        System.out.println(compareSeconds);
+    }
 
 }

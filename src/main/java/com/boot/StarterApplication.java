@@ -10,9 +10,6 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
  * @version 1.0.0
  * @Date 2020/8/26 9:43
  * <h></h>
- * <p>
- *
- * </p>
  */
 @SpringBootApplication
 public class StarterApplication {

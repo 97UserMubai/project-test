@@ -68,9 +68,6 @@
         <!--tableName:指定了表名
             domainObjectName:指定了实体类的名称
         -->
-        <table tableName="iec_sms_sign" domainObjectName="IecSmsSign"/>
-        <table tableName="iec_sms_template" domainObjectName="IecSmsTemplate"/>
-        <table tableName="iec_sms_task" domainObjectName="IecSmsTask"/>
-        <table tableName="iec_sms_feedback" domainObjectName="IecSmsFeedback"/>
+        <table tableName="iec_customer_contact" domainObjectName="IecCustomerContact"/>
     </context>
 </generatorConfiguration>

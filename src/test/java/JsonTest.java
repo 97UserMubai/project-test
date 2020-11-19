@@ -53,4 +53,17 @@ public class JsonTest {
         List parseJson = (List) JSON.parse(strList);
         System.out.println("debug");
     }
+
+    @Test
+    public void testJsonMap() {
+        List<Map<String, String>> list = new ArrayList<>();
+        Map<String, String> map = new HashMap<>();
+        map.put("code", "123");
+        list.add(map);
+        System.out.println(JSON.toJSONString(list));
+        List<String> list1 = new ArrayList<>();
+        list1.add("f89592446ce5143f23e3612ecbe67641");
+        list1.add("f8ead8c9a38bbcc7f3c39b00f8efa529");
+        System.out.println(JSON.toJSONString(list1));
+    }
 }

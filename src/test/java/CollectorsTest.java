@@ -4,7 +4,11 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author wangbaitao
@@ -14,6 +18,7 @@ import java.util.List;
  */
 public class CollectorsTest {
     private static List<Integer> integerList = new ArrayList<>();
+
     static {
         integerList.add(-8);
         integerList.add(-7);
@@ -25,13 +30,17 @@ public class CollectorsTest {
     }
 
     @Test
-    public void test(){
+    public void test() {
         List<Student> studentList = new ArrayList<>();
         studentList.add(new Student(1, "wbt", LocalDate.now().minusDays(2)));
         studentList.add(new Student(2, "wbt3", LocalDate.now()));
         studentList.add(new Student(3, "wbt4", LocalDate.now().plusDays(2)));
+        studentList.add(new Student(3, "wbt5", LocalDate.now().plusDays(2)));
         CollectorsUtils collectorsUtils = new CollectorsUtils();
         collectorsUtils.testCollectors(studentList);
-        collectorsUtils.testCollectors2(studentList,integerList);
+        collectorsUtils.testCollectors2(studentList, integerList);
+        Map<Integer, Student> map = new HashMap<>();
+        map = studentList.stream().collect(Collectors.toMap(Student::getId, Function.identity()));
+        System.out.println("debug");
     }
 }

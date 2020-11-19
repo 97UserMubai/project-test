@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.boot.entity.mapper.IecCustomerContactMapper" >
+  <resultMap id="BaseResultMap" type="com.boot.entity.IecCustomerContact" >
+    <result column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="contact_type" property="contactType"/>
+    <result column="source" property="source"/>
+    <result column="type" property="type"/>
+    <result column="sex" property="sex"/>
+    <result column="department" property="department"/>
+    <result column="position" property="position"/>
+    <result column="remark" property="remark"/>
+    <result column="content" property="content"/>
+    <result column="subscribe_channel" property="subscribeChannel"/>
+    <result column="birth_date" property="birthDate"/>
+    <result column="phone" property="phone"/>
+    <result column="landline" property="landline"/>
+    <result column="fax" property="fax"/>
+    <result column="email" property="email"/>
+    <result column="wechat" property="wechat"/>
+    <result column="letter_address" property="letterAddress"/>
+    <result column="postal_code" property="postalCode"/>
+    <result column="cust_type" property="custType"/>
+    <result column="cust_name" property="custName"/>
+    <result column="cust_code" property="custCode"/>
+    <result column="priority" property="priority"/>
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, name, contact_type, source, type, sex, department, position, remark, content, 
+    subscribe_channel, birth_date, phone, landline, fax, email, wechat, letter_address, 
+    postal_code, cust_type, cust_name, cust_code, priority
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.boot.entity.IecCustomerContactExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from iec_customer_contact
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.boot.entity.IecCustomerContactExample" >
+    delete from iec_customer_contact
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.boot.entity.IecCustomerContact" >
+    insert into iec_customer_contact (id, name, contact_type, 
+      source, type, sex, 
+      department, position, remark, 
+      content, subscribe_channel, birth_date, 
+      phone, landline, fax, 
+      email, wechat, letter_address, 
+      postal_code, cust_type, cust_name, 
+      cust_code, priority)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{contactType,jdbcType=VARCHAR}, 
+      #{source,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
+      #{department,jdbcType=VARCHAR}, #{position,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{content,jdbcType=VARCHAR}, #{subscribeChannel,jdbcType=VARCHAR}, #{birthDate,jdbcType=DATE}, 
+      #{phone,jdbcType=VARCHAR}, #{landline,jdbcType=VARCHAR}, #{fax,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{wechat,jdbcType=VARCHAR}, #{letterAddress,jdbcType=VARCHAR}, 
+      #{postalCode,jdbcType=VARCHAR}, #{custType,jdbcType=VARCHAR}, #{custName,jdbcType=VARCHAR}, 
+      #{custCode,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.boot.entity.IecCustomerContact" >
+    insert into iec_customer_contact
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="contactType != null" >
+        contact_type,
+      </if>
+      <if test="source != null" >
+        source,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="department != null" >
+        department,
+      </if>
+      <if test="position != null" >
+        position,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="subscribeChannel != null" >
+        subscribe_channel,
+      </if>
+      <if test="birthDate != null" >
+        birth_date,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="landline != null" >
+        landline,
+      </if>
+      <if test="fax != null" >
+        fax,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="wechat != null" >
+        wechat,
+      </if>
+      <if test="letterAddress != null" >
+        letter_address,
+      </if>
+      <if test="postalCode != null" >
+        postal_code,
+      </if>
+      <if test="custType != null" >
+        cust_type,
+      </if>
+      <if test="custName != null" >
+        cust_name,
+      </if>
+      <if test="custCode != null" >
+        cust_code,
+      </if>
+      <if test="priority != null" >
+        priority,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="contactType != null" >
+        #{contactType,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null" >
+        #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="department != null" >
+        #{department,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null" >
+        #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="subscribeChannel != null" >
+        #{subscribeChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="birthDate != null" >
+        #{birthDate,jdbcType=DATE},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="landline != null" >
+        #{landline,jdbcType=VARCHAR},
+      </if>
+      <if test="fax != null" >
+        #{fax,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="wechat != null" >
+        #{wechat,jdbcType=VARCHAR},
+      </if>
+      <if test="letterAddress != null" >
+        #{letterAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="postalCode != null" >
+        #{postalCode,jdbcType=VARCHAR},
+      </if>
+      <if test="custType != null" >
+        #{custType,jdbcType=VARCHAR},
+      </if>
+      <if test="custName != null" >
+        #{custName,jdbcType=VARCHAR},
+      </if>
+      <if test="custCode != null" >
+        #{custCode,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        #{priority,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.boot.entity.IecCustomerContactExample" resultType="java.lang.Integer" >
+    select count(*) from iec_customer_contact
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update iec_customer_contact
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contactType != null" >
+        contact_type = #{record.contactType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.source != null" >
+        source = #{record.source,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sex != null" >
+        sex = #{record.sex,jdbcType=VARCHAR},
+      </if>
+      <if test="record.department != null" >
+        department = #{record.department,jdbcType=VARCHAR},
+      </if>
+      <if test="record.position != null" >
+        position = #{record.position,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.content != null" >
+        content = #{record.content,jdbcType=VARCHAR},
+      </if>
+      <if test="record.subscribeChannel != null" >
+        subscribe_channel = #{record.subscribeChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.birthDate != null" >
+        birth_date = #{record.birthDate,jdbcType=DATE},
+      </if>
+      <if test="record.phone != null" >
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.landline != null" >
+        landline = #{record.landline,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fax != null" >
+        fax = #{record.fax,jdbcType=VARCHAR},
+      </if>
+      <if test="record.email != null" >
+        email = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.wechat != null" >
+        wechat = #{record.wechat,jdbcType=VARCHAR},
+      </if>
+      <if test="record.letterAddress != null" >
+        letter_address = #{record.letterAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.postalCode != null" >
+        postal_code = #{record.postalCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.custType != null" >
+        cust_type = #{record.custType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.custName != null" >
+        cust_name = #{record.custName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.custCode != null" >
+        cust_code = #{record.custCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.priority != null" >
+        priority = #{record.priority,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update iec_customer_contact
+    set id = #{record.id,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      contact_type = #{record.contactType,jdbcType=VARCHAR},
+      source = #{record.source,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=VARCHAR},
+      sex = #{record.sex,jdbcType=VARCHAR},
+      department = #{record.department,jdbcType=VARCHAR},
+      position = #{record.position,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      content = #{record.content,jdbcType=VARCHAR},
+      subscribe_channel = #{record.subscribeChannel,jdbcType=VARCHAR},
+      birth_date = #{record.birthDate,jdbcType=DATE},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      landline = #{record.landline,jdbcType=VARCHAR},
+      fax = #{record.fax,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR},
+      wechat = #{record.wechat,jdbcType=VARCHAR},
+      letter_address = #{record.letterAddress,jdbcType=VARCHAR},
+      postal_code = #{record.postalCode,jdbcType=VARCHAR},
+      cust_type = #{record.custType,jdbcType=VARCHAR},
+      cust_name = #{record.custName,jdbcType=VARCHAR},
+      cust_code = #{record.custCode,jdbcType=VARCHAR},
+      priority = #{record.priority,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>
