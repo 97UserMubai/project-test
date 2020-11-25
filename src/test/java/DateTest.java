@@ -1,9 +1,8 @@
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * @author wangbaitao
@@ -36,13 +35,22 @@ public class DateTest {
         System.out.println("今天是：" + LocalDate.now().toString());
         System.out.println("王狗子和沈咸鱼的恋爱已经" + (LocalDate.now().toEpochDay() - loveDate.toEpochDay()) + "天了");
     }
+
     @Test
-    public void testHourCompare(){
+    public void testHourCompare() {
         LocalDateTime localDateTime = LocalDateTime.now();
         LocalDateTime localDateTime1 = localDateTime.minusHours(2);
         long compareSeconds = localDateTime.toEpochSecond(OffsetDateTime.now().getOffset())
                 - localDateTime1.toEpochSecond(OffsetDateTime.now().getOffset());
         System.out.println(compareSeconds);
+    }
+
+    @Test
+    public void localDatetimeToDate() {
+        ZoneId zoneId = ZoneId.systemDefault();
+        ZonedDateTime zdt = LocalDateTime.now().atZone(zoneId);//Combines this date-time with a time-zone to create a  ZonedDateTime.
+        Date date = Date.from(zdt.toInstant());
+        System.out.println(date.toString());
     }
 
 }

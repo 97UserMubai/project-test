@@ -68,6 +68,6 @@
         <!--tableName:指定了表名
             domainObjectName:指定了实体类的名称
         -->
-        <table tableName="iec_customer_contact" domainObjectName="IecCustomerContact"/>
+        <table tableName="iec_audit_work_order_log" domainObjectName="IecAuditWorkOrderLog"/>
     </context>
 </generatorConfiguration>
