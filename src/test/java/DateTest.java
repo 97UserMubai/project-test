@@ -21,10 +21,15 @@ public class DateTest {
     public void testSecondCompare() {
         LocalDateTime localDateTime = LocalDateTime.now();
         LocalDateTime localDateTime1 = localDateTime.minusDays(2);
+        LocalDateTime localDateTime2 = LocalDateTime.now();
+        LocalDateTime localDateTime3 = localDateTime.minusHours(1).plusSeconds(30);
+        System.out.println(localDateTime1.compareTo(localDateTime));
+        System.out.println(localDateTime2.compareTo(localDateTime));
+        System.out.println(localDateTime3.compareTo(localDateTime));
         //进行秒级的单位比较
         long compareSeconds = localDateTime.toEpochSecond(OffsetDateTime.now().getOffset())
-                - localDateTime1.toEpochSecond(OffsetDateTime.now().getOffset());
-        System.out.println(compareSeconds);
+                - localDateTime3.toEpochSecond(OffsetDateTime.now().getOffset());
+        System.out.println(compareSeconds - 3600);
     }
 
     @Test
@@ -51,6 +56,35 @@ public class DateTest {
         ZonedDateTime zdt = LocalDateTime.now().atZone(zoneId);//Combines this date-time with a time-zone to create a  ZonedDateTime.
         Date date = Date.from(zdt.toInstant());
         System.out.println(date.toString());
+    }
+
+    @Test
+    public void localDateTest() {
+        LocalDate localDate = LocalDate.now();
+        System.out.println(localDate.getDayOfMonth());
+        LocalDate curDate = localDate.minusDays(localDate.getDayOfMonth() - 1);
+        System.out.println(curDate);
+    }
+
+    @Test
+    public void timeTest() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime1 = LocalDateTime.now();
+        LocalDateTime localDateTime2 = localDateTime1.minusSeconds(2);
+        LocalDateTime localDateTime3 = localDateTime1.plusSeconds(2);
+        System.out.println(localDateTime.compareTo(localDateTime1));
+        System.out.println(localDateTime.compareTo(localDateTime2));
+        System.out.println(localDateTime.compareTo(localDateTime3));
+    }
+
+    /**
+     * 测试新买的键盘好不好用
+     */
+    @Test
+    public void testLocalDateTIme() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        System.out.println(localDateTime);
+
     }
 
 }

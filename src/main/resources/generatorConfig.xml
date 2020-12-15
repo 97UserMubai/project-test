@@ -68,6 +68,8 @@
         <!--tableName:指定了表名
             domainObjectName:指定了实体类的名称
         -->
-        <table tableName="iec_audit_work_order_log" domainObjectName="IecAuditWorkOrderLog"/>
+        <table tableName="iec_elec_biz_completion" domainObjectName="IecElecBizCompletion"/>
+        <table tableName="iec_elec_biz_unit_certificates" domainObjectName="IecElecBizUnitCertificates"/>
+        <table tableName="iec_elec_biz_unit_details" domainObjectName="IecElecBizUnitDetails"/>
     </context>
 </generatorConfiguration>

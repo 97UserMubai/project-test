@@ -18,4 +18,10 @@ public class StringTest {
         String test2 = "A";
         System.out.println(test.substring(0, test2.length() + 3));
     }
+    @Test
+    public void test1(){
+        String str1 = "1234";
+        String str2 = "2345";
+        System.out.println(str1.compareTo(str2));
+    }
 }
