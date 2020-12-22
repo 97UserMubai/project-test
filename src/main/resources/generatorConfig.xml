@@ -20,9 +20,9 @@
 
         <!--jdbc的数据库连接 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://168.168.3.210:3306/jwd_iec"
-                        userId="root"
-                        password="123456">
+                        connectionURL="jdbc:mysql://168.168.0.63:8036/jwd_iec"
+                        userId="syni_iec"
+                        password="syni_iec@12345">
         </jdbcConnection>
 
 
@@ -68,8 +68,10 @@
         <!--tableName:指定了表名
             domainObjectName:指定了实体类的名称
         -->
-        <table tableName="iec_elec_biz_completion" domainObjectName="IecElecBizCompletion"/>
-        <table tableName="iec_elec_biz_unit_certificates" domainObjectName="IecElecBizUnitCertificates"/>
-        <table tableName="iec_elec_biz_unit_details" domainObjectName="IecElecBizUnitDetails"/>
+        <table tableName="iec_elec_biz_completion_inspection" domainObjectName="IecElecBizCompletionInspection"/>
+        <table tableName="iec_elec_biz_completion_inspection_log" domainObjectName="IecElecBizCompletionInspectionLog"/>
+        <table tableName="iec_elec_biz_completion_inspection_project" domainObjectName="IecElecBizCompletionInspectionProject"/>
+        <table tableName="iec_elec_biz_completion_middle_inspection" domainObjectName="IecElecBizCompletionMiddleInspection"/>
+        <table tableName="iec_elec_biz_master_equipment_supply_unit" domainObjectName="IecElecBizMasterEquipmentSupplyUnit"/>
     </context>
 </generatorConfiguration>

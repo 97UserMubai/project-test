@@ -1,5 +1,7 @@
 import org.junit.Test;
 
+import java.time.LocalDateTime;
+
 /**
  * @author wangbaitao
  * @version 1.0.0
@@ -29,5 +31,16 @@ public class CompareTest {
         double double1 = 1.00;
         //true
         System.out.println(integer1 == double1);
+    }
+
+    @Test
+    public void test2() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime1 = localDateTime;
+        LocalDateTime localDateTime2 = localDateTime1.minusDays(1);
+        LocalDateTime localDateTime3 = localDateTime1.plusDays(2);
+        System.out.println(localDateTime.compareTo(localDateTime1));
+        System.out.println(localDateTime2.compareTo(localDateTime1));
+        System.out.println(localDateTime3.compareTo(localDateTime1));
     }
 }
