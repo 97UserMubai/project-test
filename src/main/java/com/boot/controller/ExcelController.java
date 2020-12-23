@@ -9,11 +9,20 @@ import com.boot.bean.IecElecBizDeviceMeter;
 import com.boot.bean.IecElecBizReception;
 import com.boot.vo.EquipmentPrintVO;
 import com.boot.vo.MeterVO;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.util.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -21,6 +30,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author wangbaitao
@@ -95,4 +105,39 @@ public class ExcelController {
         return meterVOS;
     }
 
+    @RequestMapping("/excelMerge")
+    public void excelMerge(HttpServletResponse response) throws Exception {
+        // 创建HSSFWorkbook，暂时存放数据
+        File headPathFile = new File("C:\\Users\\Administrator\\Desktop\\模板测试\\result-1608714950526\\header\\head.xls");
+        HSSFWorkbook targetWork = new HSSFWorkbook(new FileInputStream(headPathFile));
+        HSSFSheet targetSheet = targetWork.getSheetAt(0);
+        // 记录targetWork新建行位置
+        int targetLineIndex = 7;
+        HSSFWorkbook workbook;
+        HSSFSheet sheet;
+        File sourcePathFile = new File("C:\\Users\\Administrator\\Desktop\\模板测试\\result-1608714950526\\meter");
+        for (File file : Objects.requireNonNull(sourcePathFile.listFiles())) {
+            workbook = new HSSFWorkbook(new FileInputStream(file));
+            sheet = workbook.getSheetAt(0);
+            for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+                Row sourceRow = sheet.getRow(i);
+                Row targetRow = targetSheet.createRow(targetLineIndex);
+                targetLineIndex++;
+                for (int j = 0; j < sourceRow.getLastCellNum(); j++) {
+                    Cell cell = sourceRow.getCell(j);
+                    Cell cellNew = targetRow.createCell(j);
+                    cellNew.setCellValue(cell.toString());
+                    if (j == 0 && StringUtils.isNotBlank(cell.toString())) {
+                        //设置样式
+
+                    }
+                }
+            }
+        }
+//        targetSheet.addMergedRegion(new CellRangeAddress(0, 7, 0, 0));
+        response.reset();
+        response.setContentType("application/octet-stream; charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment; filename= final.xls");
+        targetWork.write(response.getOutputStream());
+    }
 }
