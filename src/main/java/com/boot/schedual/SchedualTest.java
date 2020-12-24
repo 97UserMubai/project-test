@@ -21,7 +21,7 @@ public class SchedualTest {
     @Scheduled(fixedRate = delaySeconds)
     private void test() {
 //        System.out.println("我是输出测试的当前时间为：" + LocalDateTime.now().toString());
-        System.out.println("当前websocket的会话大小:" + WebSocketServer.electricSocketMap.size());
+//        System.out.println("当前websocket的会话大小:" + WebSocketServer.electricSocketMap.size());
         WebSocketServer.electricSocketMap.forEach((s, session) ->
                 session.getAsyncRemote().sendText("当前测试时间" + LocalDateTime.now().toString()));
     }

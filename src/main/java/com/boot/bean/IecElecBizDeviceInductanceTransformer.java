@@ -25,7 +25,7 @@ import java.io.Serializable;
 @Builder
 public class IecElecBizDeviceInductanceTransformer implements Serializable {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.ASSIGN_UUID)
     private String id;
@@ -72,21 +72,21 @@ public class IecElecBizDeviceInductanceTransformer implements Serializable {
 
     /**
      * 额定电压（220V
-3×220/380V
-3×57.7/100V
-3×380V
-3×100V）
+     * 3×220/380V
+     * 3×57.7/100V
+     * 3×380V
+     * 3×100V）
      */
     private String voltage;
 
     /**
      * 相别（A相
-B相
-C相
-AB相
-AC相
-BC相
-AB相+ BC相）
+     * B相
+     * C相
+     * AB相
+     * AC相
+     * BC相
+     * AB相+ BC相）
      */
     private String phase;
 

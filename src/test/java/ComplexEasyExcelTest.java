@@ -2,9 +2,7 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.metadata.fill.FillConfig;
-import com.boot.bean.IecCustomerElecUser;
-import com.boot.bean.IecElecBizDeviceMeter;
-import com.boot.bean.IecElecBizReception;
+import com.boot.bean.*;
 import com.boot.vo.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -18,8 +16,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -54,72 +53,80 @@ public class ComplexEasyExcelTest {
 
     @Test
     public void test2() {
-        //测试2
         //获取基本信息
         EquipmentPrintVO equipmentPrintVO = getReceptionDetails();
         //获取电能表数据列表
         List<MeterVO> meterVOList = getMeterList(equipmentPrintVO);
         //头部模板
-        String headTempName = "C:\\Users\\Administrator\\Desktop\\模板测试\\装拆工作单模板-头.xls";
-        long mills = System.currentTimeMillis();
-        String dir = path + mills + "\\header";
-        String dir2 = path + mills + "\\meter";
-        String dir3 = path + mills + "\\final";
-        File fileDir = new File(dir);
-        if (!fileDir.exists()) {
-            fileDir.mkdirs();
-        }
-        fileDir = new File(dir2);
-        if (!fileDir.exists()) {
-            fileDir.mkdirs();
-        }
-        fileDir = new File(dir3);
-        if (!fileDir.exists()) {
-            fileDir.mkdirs();
-        }
-        String headFileName = dir + File.separator + "head.xls";
+        String headTempName = "C:\\Users\\Administrator\\Desktop\\模板测试\\装拆工作单模板-头.xlsx";
+        String path = prepareFilePath();
+        String headFileName = path + File.separator + "header" + File.separator + "head.xlsx";
         EasyExcel.write(headFileName).withTemplate(headTempName).sheet().doFill(equipmentPrintVO);
         //电能表模板
-        String meterTempName = "C:\\Users\\Administrator\\Desktop\\模板测试\\装拆工作单模板-电能表.xls";
-        //动态输出
-        AtomicInteger atomicInteger = new AtomicInteger(0);
+        String meterTempName = "C:\\Users\\Administrator\\Desktop\\模板测试\\装拆工作单模板-电能表.xlsx";
+        //动态输出电能表数据
+        AtomicInteger meterCount = new AtomicInteger(0);
         meterVOList.forEach(meterVO -> {
-            String meterFileName = dir2 + File.separator + "meter-" + atomicInteger.get() + ".xls";
-            atomicInteger.addAndGet(1);
+            String meterFileName = path + File.separator + "meter" + File.separator + "meter-" + meterCount.get() + ".xlsx";
+            meterCount.addAndGet(1);
             EasyExcel.write(meterFileName).withTemplate(meterTempName).sheet().doFill(meterVO);
         });
-        try {
-            outPutFinalResult(mills, headFileName, dir2);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //动态输出互感器数据
+        String tranTempName = "C:\\Users\\Administrator\\Desktop\\模板测试\\装拆工作单模板-互感器.xlsx";
+        AtomicInteger transCount = new AtomicInteger(0);
+        List<IecElecBizDeviceInductanceTransformer> transformers = new ArrayList<>();
+        transformers.add(IecElecBizDeviceInductanceTransformer.builder().calculateNumber("我是计量点编号001").build());
+        transformers.add(IecElecBizDeviceInductanceTransformer.builder().calculateNumber("我是计量点编号002").build());
+        transformers.add(IecElecBizDeviceInductanceTransformer.builder().calculateNumber("我是计量点编号003").build());
+        transformers.forEach(tran -> {
+            String tranFileName = path + File.separator + "transformer" + File.separator + "transformer-"
+                    + transCount.get() + ".xlsx";
+            transCount.addAndGet(1);
+            EasyExcel.write(tranFileName).withTemplate(tranTempName).sheet().doFill(tran);
+        });
+        //动态输出终端数据和采集关系数据
+        String loadTempName = "C:\\Users\\Administrator\\Desktop\\模板测试\\装拆工作单模板-终端.xlsx";
+        AtomicInteger loadCount = new AtomicInteger(0);
+        List<IecElecBizDeviceLoad> loads = new ArrayList<>();
+        loads.add(IecElecBizDeviceLoad.builder().elecUserCode("000001").changeSign("新装").build());
+        loads.add(IecElecBizDeviceLoad.builder().elecUserCode("000002").changeSign("拆除").build());
+        loads.forEach(load -> {
+            String loadFileName = path + File.separator + "load" + File.separator + "load-"
+                    + loadCount.get() + ".xlsx";
+            loadCount.addAndGet(1);
+            EasyExcel.write(loadFileName).withTemplate(loadTempName).sheet().doFill(load);
+        });
+        //输出采集关系数据
+        String contactTempName = "C:\\Users\\Administrator\\Desktop\\模板测试\\装拆工作单模板-终端采集关系变更列表.xlsx";
+        String loadFileName = path + File.separator + "contact" + File.separator + "contact.xlsx";
+        EasyExcel.write(loadFileName).withTemplate(contactTempName).sheet().doFill(loads);
+        //输出尾部
+        String endTempName = "C:\\Users\\Administrator\\Desktop\\模板测试\\装拆工作单模板-尾部.xlsx";
+        String endFileName = path + File.separator + "end" + File.separator + "end.xlsx";
+        Map<String, Object> map = new HashMap<>();
+        map.put("printDate", LocalDate.now().toString());
+        EasyExcel.write(endFileName).withTemplate(endTempName).sheet().doFill(map);
     }
 
-    /**
-     * 进行文件结果的合并
-     */
-    private void outPutFinalResult(long mills, String headFileName, String meterPath) throws IOException {
-        File finalFile = new File(path + mills + "\\final" + File.separator + "final.xls");
-        //进行头部内容的复制
-        FileUtils.copyFile(new File(headFileName), finalFile);
-        File file = new File(meterPath);
-        File[] files = file.listFiles();
-        for (int i = 0; i < Objects.requireNonNull(files).length; i++) {
-            File meterFile = new File(meterPath + File.separator + "meter-" + i + ".xls");
-            FileInputStream fis = new FileInputStream(meterFile);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            byte[] buffer;
-            byte[] b = new byte[1024];
-            int n;
-            while ((n = fis.read(b)) != -1) {
-                bos.write(b, 0, n);
+    private String prepareFilePath() {
+        String pathTemp = path + System.currentTimeMillis();
+        List<String> pathList = new ArrayList<>();
+        pathList.add(pathTemp + File.separator + "header");
+        pathList.add(pathTemp + File.separator + "meter");
+        pathList.add(pathTemp + File.separator + "transformer");
+        pathList.add(pathTemp + File.separator + "load");
+        pathList.add(pathTemp + File.separator + "end");
+        pathList.add(pathTemp + File.separator + "contact");
+        File fileDir;
+        for (String p : pathList) {
+            fileDir = new File(p);
+            if (!fileDir.exists()) {
+                fileDir.mkdirs();
             }
-            fis.close();
-            bos.close();
-            buffer = bos.toByteArray();
-            FileUtils.writeByteArrayToFile(finalFile, buffer, true);
         }
+        return pathTemp;
     }
+
 
     @Test
     public void test3() throws IOException {

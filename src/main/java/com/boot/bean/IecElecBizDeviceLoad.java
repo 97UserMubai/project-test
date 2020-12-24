@@ -91,25 +91,25 @@ public class IecElecBizDeviceLoad implements Serializable {
 
     /**
      * 通讯方式（红外通信
-     RS485通信
-     载波通信
-     无线电通信
-     GPRS通信
-     CDMA通信
-     光纤通信
-     WIFI通信
-     蓝牙通信
-     RJ-11
-     RJ-45
-     RS232）
+     * RS485通信
+     * 载波通信
+     * 无线电通信
+     * GPRS通信
+     * CDMA通信
+     * 光纤通信
+     * WIFI通信
+     * 蓝牙通信
+     * RJ-11
+     * RJ-45
+     * RS232）
      */
     private String communicationMode;
 
     /**
      * 通讯规约（DL/T645
-     IEC1107
-     GB/T 19897.1-2005（IEC62056-21）
-     DL/T698）
+     * IEC1107
+     * GB/T 19897.1-2005（IEC62056-21）
+     * DL/T698）
      */
     private String communicationProtocol;
 
