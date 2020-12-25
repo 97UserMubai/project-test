@@ -5,6 +5,7 @@ import com.boot.bean.*;
 import com.boot.vo.EquipmentPrintVO;
 import com.boot.vo.MeterVO;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -41,6 +42,11 @@ public class ExcelController {
     public static final String MODULE_PATH = Objects.requireNonNull(Thread.currentThread().getContextClassLoader()
             .getResource("")).getPath() + "template" + File.separator;
 
+    private int loadSize = 0;
+    private int meterSize = 0;
+    private int tranSize = 0;
+    private CellStyle endStyle;
+
     @GetMapping("/excelMerge")
     public String excelMerge() throws Exception {
         // 创建HSSFWorkbook，暂时存放数据
@@ -52,7 +58,11 @@ public class ExcelController {
         int targetLineIndex = 7;
         CellStyle fontStyle = getFont(targetWork);
         CellStyle masterStyle = getMasterStyle(targetWork);
+        getEndStyle(targetWork);
+        //进行数据合并
         produceMeterExcel(fontStyle, targetSheet, targetLineIndex, path);
+        //进行样式合并
+        produceMeterStyle(targetSheet, masterStyle);
         String resultFileName = "result.xlsx";
         targetWork.write(FileUtils.openOutputStream(new File(path + File.separator + resultFileName)));
         return resultFileName;
@@ -77,6 +87,7 @@ public class ExcelController {
             meterCount.addAndGet(1);
             EasyExcel.write(meterFileName).withTemplate(meterTempName).sheet().doFill(meterVO);
         });
+        meterSize = meterVOList.size();
         //动态输出互感器数据
         String tranTempName = MODULE_PATH + "装拆工作单模板-互感器.xlsx";
         AtomicInteger transCount = new AtomicInteger(0);
@@ -90,22 +101,28 @@ public class ExcelController {
             transCount.addAndGet(1);
             EasyExcel.write(tranFileName).withTemplate(tranTempName).sheet().doFill(tran);
         });
+        tranSize = transformers.size();
         //动态输出终端数据和采集关系数据
         String loadTempName = MODULE_PATH + "装拆工作单模板-终端.xlsx";
         AtomicInteger loadCount = new AtomicInteger(0);
         List<IecElecBizDeviceLoad> loads = new ArrayList<>();
-        loads.add(IecElecBizDeviceLoad.builder().elecUserCode("000001").changeSign("新装").build());
-        loads.add(IecElecBizDeviceLoad.builder().elecUserCode("000002").changeSign("拆除").build());
+        loads.add(IecElecBizDeviceLoad.builder().elecUserCode("000001").changeSign("新装")
+                .communicationMode("我是测试换行换行换行我是测试换行换行换行我是测试换行换行换行").build());
+        loads.add(IecElecBizDeviceLoad.builder().elecUserCode("000002").changeSign("拆除")
+                .communicationMode("我是测试换行换行换行我是测试换行换行换行我是测试换行换行换行").build());
         loads.forEach(load -> {
             String loadFileName = path + File.separator + "load" + File.separator + "load-"
                     + loadCount.get() + ".xlsx";
             loadCount.addAndGet(1);
             EasyExcel.write(loadFileName).withTemplate(loadTempName).sheet().doFill(load);
         });
+        loadSize = loads.size();
         //输出采集关系数据
-        String contactTempName = MODULE_PATH + "装拆工作单模板-终端采集关系变更列表.xlsx";
-        String loadFileName = path + File.separator + "contact" + File.separator + "contact.xlsx";
-        EasyExcel.write(loadFileName).withTemplate(contactTempName).sheet().doFill(loads);
+        if (loadSize > 0) {
+            String contactTempName = MODULE_PATH + "装拆工作单模板-终端采集关系变更列表.xlsx";
+            String loadFileName = path + File.separator + "contact" + File.separator + "contact.xlsx";
+            EasyExcel.write(loadFileName).withTemplate(contactTempName).sheet().doFill(loads);
+        }
         //输出尾部
         String endTempName = MODULE_PATH + "装拆工作单模板-尾部.xlsx";
         String endFileName = path + File.separator + "end" + File.separator + "end.xlsx";
@@ -139,17 +156,60 @@ public class ExcelController {
             throws IOException {
         File sourcePathFile = new File(path + File.separator + "meter");
         targetLineIndex = productCommonExcel(fontStyle, targetSheet, targetLineIndex, sourcePathFile);
-        //设置电能表样式
-        int beginIndex = 7;
-        int endIndex = 15;
-        for (int i = 0; i < Objects.requireNonNull(sourcePathFile.listFiles()).length; i++) {
-            if (i > 0) {
-                beginIndex = endIndex + 1;
-                endIndex = beginIndex + 8;
-            }
-            targetSheet.addMergedRegion(new CellRangeAddress(beginIndex, endIndex, 0, 0));
-        }
         produceTranExcel(fontStyle, targetSheet, targetLineIndex, path);
+    }
+
+    private void produceMeterStyle(XSSFSheet targetSheet, CellStyle masterStyle) {
+        //设置电能表样式
+        int colEndIndex = 6;
+        if (meterSize > 0) {
+            int colBeginIndex = colEndIndex + 1;
+            colEndIndex = colBeginIndex + 8;
+            for (int i = 0; i < meterSize; i++) {
+                if (i > 0) {
+                    colBeginIndex = colEndIndex + 1;
+                    colEndIndex = colBeginIndex + 8;
+                }
+                Row row = targetSheet.getRow(colBeginIndex);
+                Cell cell = row.getCell(0);
+                cell.setCellValue("电能表变更列表");
+                cell.setCellStyle(masterStyle);
+                //总共十二列9行,按行进行单元格需求的合并
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colEndIndex, 0, 0));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 1, colEndIndex - 1, 1, 1));
+                //第一行
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 2, 3));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 4, 5));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 6, 8));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 9, 10));
+                //第二行
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 1, colBeginIndex + 1, 2, 3));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 1, colBeginIndex + 1, 4, 5));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 1, colBeginIndex + 1, 6, 8));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 1, colBeginIndex + 1, 9, 10));
+                //第五行
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 4, colBeginIndex + 4, 2, 3));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 4, colBeginIndex + 4, 4, 7));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 4, colBeginIndex + 4, 8, 12));
+                //第六行
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 5, colBeginIndex + 5, 2, 3));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 5, colBeginIndex + 5, 4, 7));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 5, colBeginIndex + 5, 8, 12));
+                //第七行
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 6, colBeginIndex + 6, 2, 3));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 6, colBeginIndex + 6, 4, 7));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 6, colBeginIndex + 6, 8, 12));
+                //第八行
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 7, colBeginIndex + 7, 2, 3));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 7, colBeginIndex + 7, 4, 7));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 7, colBeginIndex + 7, 8, 9));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 7, colBeginIndex + 7, 10, 12));
+                //第九行
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 8, colBeginIndex + 8, 2, 6));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 8, colBeginIndex + 8, 8, 12));
+            }
+        }
+        produceTranStyle(targetSheet, colEndIndex, masterStyle);
     }
 
     private EquipmentPrintVO getReceptionDetails() {
@@ -196,6 +256,40 @@ public class ExcelController {
         produceLoadExcel(fontStyle, targetSheet, targetLineIndex, path);
     }
 
+    private void produceTranStyle(XSSFSheet targetSheet, int colEndIndex, CellStyle masterStyle) {
+        //进行横向头部的合并
+        if (tranSize > 0) {
+            int size = tranSize * 3;
+            targetSheet.addMergedRegion(new CellRangeAddress(colEndIndex + 1, colEndIndex + size, 0, 0));
+            int colBeginIndex;
+            for (int i = 0; i < tranSize; i++) {
+                //第一行
+                colBeginIndex = colEndIndex + 1;
+                colEndIndex = colBeginIndex + 2;
+                //进行头部内容加工
+                if (i == 0) {
+                    Row row = targetSheet.getRow(colBeginIndex);
+                    Cell cell = row.getCell(0);
+                    cell.setCellValue("互感器变更列表");
+                    cell.setCellStyle(masterStyle);
+                }
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 1, 2));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 5, 6));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 8, 9));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 10, 11));
+                //第二行
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 1, colBeginIndex + 1, 1, 2));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 1, colBeginIndex + 1, 5, 6));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 1, colBeginIndex + 1, 8, 9));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 1, colBeginIndex + 1, 10, 11));
+                //第三行
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 2, colBeginIndex + 2, 2, 6));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 2, colBeginIndex + 2, 8, 12));
+            }
+        }
+        produceLoadStyle(targetSheet, colEndIndex);
+    }
+
     private void produceLoadExcel(CellStyle fontStyle, XSSFSheet targetSheet, int targetLineIndex, String path)
             throws IOException {
         File sourcePathFile = new File(path + File.separator + "load");
@@ -203,17 +297,60 @@ public class ExcelController {
         productContactExcel(fontStyle, targetSheet, targetLineIndex, path);
     }
 
+    private void produceLoadStyle(XSSFSheet targetSheet, int colEndIndex) {
+        if (loadSize > 0) {
+            int colBeginIndex;
+            for (int i = 0; i < loadSize; i++) {
+                colBeginIndex = colEndIndex + 1;
+                colEndIndex = colBeginIndex + 2;
+                //横向头
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colEndIndex, 0, 0));
+                //第一行
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 1, 3));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 4, 12));
+                //第二行
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 1, colBeginIndex + 1, 3, 4));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 1, colBeginIndex + 1, 5, 6));
+                //第三行
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 2, colBeginIndex + 2, 3, 4));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 2, colBeginIndex + 2, 5, 6));
+            }
+        }
+        produceContactStyle(targetSheet, colEndIndex);
+    }
+
     private void productContactExcel(CellStyle fontStyle, XSSFSheet targetSheet, int targetLineIndex, String path)
             throws IOException {
         File sourcePathFile = new File(path + File.separator + "contact");
         targetLineIndex = productCommonExcel(fontStyle, targetSheet, targetLineIndex, sourcePathFile);
-        productEndExcel(fontStyle, targetSheet, targetLineIndex, path);
+        productEndExcel(targetSheet, targetLineIndex, path);
     }
 
-    private void productEndExcel(CellStyle fontStyle, XSSFSheet targetSheet, int targetLineIndex, String path)
+    private void produceContactStyle(XSSFSheet targetSheet, int colEndIndex) {
+        int colBeginIndex = colEndIndex;
+        if (loadSize > 0) {
+            //进行合并
+            colBeginIndex = colEndIndex + 1;
+            //头部合并
+            targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 0, 12));
+            //内容合并
+            for (int i = 0; i <= loadSize; i++) {
+                colBeginIndex = colBeginIndex + 1;
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 0, 1));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 8, 9));
+                targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex, colBeginIndex, 11, 12));
+            }
+        }
+        //尾部合并
+        targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 1, colBeginIndex + 2, 0, 12));
+        targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 3, colBeginIndex + 4, 0, 12));
+        targetSheet.addMergedRegion(new CellRangeAddress(colBeginIndex + 5, colBeginIndex + 6, 0, 12));
+    }
+
+    private void productEndExcel(XSSFSheet targetSheet, int targetLineIndex, String path)
             throws IOException {
         File sourcePathFile = new File(path + File.separator + "end");
-        productCommonExcel(fontStyle, targetSheet, targetLineIndex, sourcePathFile);
+        productCommonExcel(endStyle, targetSheet, targetLineIndex, sourcePathFile);
     }
 
     private int productCommonExcel(CellStyle fontStyle, XSSFSheet targetSheet, int targetLineIndex,
@@ -225,13 +362,18 @@ public class ExcelController {
                 Row sourceRow = sheet.getRow(i);
                 Row targetRow = targetSheet.createRow(targetLineIndex);
                 targetLineIndex++;
-                for (int j = 0; j < sourceRow.getLastCellNum(); j++) {
-                    Cell cell = sourceRow.getCell(j);
-                    Cell cellNew = targetRow.createCell(j);
-                    if (Objects.nonNull(cell)) {
-                        cellNew.setCellValue(cell.toString());
+                if (Objects.nonNull(sourceRow)) {
+                    for (int j = 0; j < sourceRow.getLastCellNum(); j++) {
+                        Cell cell = sourceRow.getCell(j);
+                        Cell cellNew = targetRow.createCell(j);
+                        if (Objects.nonNull(cell) && StringUtils.isNotBlank(cell.toString())) {
+                            cellNew.setCellValue(cell.toString());
+                        }
+                        if (j <= 12) {
+                            //只操作前面13列
+                            cellNew.setCellStyle(fontStyle);
+                        }
                     }
-                    cellNew.setCellStyle(fontStyle);
                 }
             }
         }
@@ -249,6 +391,7 @@ public class ExcelController {
         style.setBorderRight(BorderStyle.THIN);//右边框
         style.setAlignment(HorizontalAlignment.CENTER);//居中
         style.setVerticalAlignment(VerticalAlignment.CENTER); //垂直居中
+        style.setWrapText(true);
         return style;
     }
 
@@ -256,5 +399,17 @@ public class ExcelController {
         CellStyle style = getFont(targetWork);
         style.setRotation((short) 255); //竖形展示
         return style;
+    }
+
+    private void getEndStyle(XSSFWorkbook targetWork) {
+        endStyle = targetWork.createCellStyle();
+        Font font = targetWork.createFont();
+        font.setFontHeightInPoints((short) 8);
+        font.setBold(true);
+        endStyle.setFont(font);
+        endStyle.setAlignment(HorizontalAlignment.LEFT); //左上对齐
+        endStyle.setVerticalAlignment(VerticalAlignment.TOP);
+        endStyle.setBorderLeft(BorderStyle.THIN);//左边框
+        endStyle.setBorderRight(BorderStyle.THIN);//右边框
     }
 }
