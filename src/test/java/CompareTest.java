@@ -1,6 +1,13 @@
+import com.boot.bean.IecElecBillDataRecord;
+import net.sf.cglib.core.Local;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author wangbaitao
@@ -42,5 +49,36 @@ public class CompareTest {
         System.out.println(localDateTime.compareTo(localDateTime1));
         System.out.println(localDateTime2.compareTo(localDateTime1));
         System.out.println(localDateTime3.compareTo(localDateTime1));
+    }
+
+    @Test
+    public void test3() {
+        LocalDateTime localDate = LocalDateTime.now();
+        List<IecElecBillDataRecord> records = new ArrayList<>();
+        // 5 1 3 2 4
+        records.add(IecElecBillDataRecord.builder().id("1").createTime(localDate.minusHours(2)).build());
+        records.add(IecElecBillDataRecord.builder().id("2").createTime(localDate.plusHours(2)).build());
+        records.add(IecElecBillDataRecord.builder().id("3").createTime(localDate.plusHours(1)).build());
+        records.add(IecElecBillDataRecord.builder().id("4").createTime(localDate.plusMonths(2)).build());
+        records.add(IecElecBillDataRecord.builder().id("5").createTime(localDate.minusDays(2)).build());
+        Collections.sort(records);
+        records.forEach(record-> System.out.println(record.getId()));
+        System.out.println("debug");
+    }
+
+    @Test
+    public void test4(){
+        LocalDate localDate = LocalDate.now();
+        LocalDate localDate1 = localDate.minusDays(30);
+        System.out.println(localDate.toEpochDay()-localDate1.toEpochDay());
+    }
+
+    @Test
+    public void test5(){
+        BigDecimal bigDecimal = new BigDecimal("10000");
+        BigDecimal bigDecimal1 = new BigDecimal("10000.01");
+        System.out.println(bigDecimal.toString());
+        System.out.println(bigDecimal1.toString());
+
     }
 }

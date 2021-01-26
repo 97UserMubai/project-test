@@ -1,3 +1,5 @@
+import net.sf.cglib.core.Local;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.time.*;
@@ -84,6 +86,31 @@ public class DateTest {
     public void testLocalDateTIme() {
         LocalDateTime localDateTime = LocalDateTime.now();
         System.out.println(localDateTime);
+
+    }
+
+    @Test
+    public void testHour() {
+        System.out.println(LocalDateTime.now().getHour());
+    }
+
+    @Test
+    public void testHour2() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime time2 = currentTime.minusDays(2).minusSeconds(2500);
+        long seconds = currentTime.toEpochSecond(OffsetDateTime.now().getOffset())
+                - time2.toEpochSecond(OffsetDateTime.now().getOffset());
+        System.out.println(Math.ceil(seconds / 3600.00));
+    }
+
+    @Test
+    public void testMonthValue() {
+        LocalDate localDate = LocalDate.now();
+        System.out.println(localDate.getYear());
+        System.out.println(localDate.getMonthValue());
+        System.out.println(StringUtils.leftPad(String.valueOf(localDate.getMonthValue()), 2, '0'));
+        LocalDate localDate1 = localDate.plusMonths(10);
+        System.out.println(StringUtils.leftPad(String.valueOf(localDate1.getMonthValue()), 2, '0'));
 
     }
 

@@ -37,15 +37,16 @@ public class ComplexEasyExcelTest {
         //获取电能表数据列表
         List<MeterVO> meterVOList = getMeterList(equipmentPrintVO);
         String templateFileName = "C:\\Users\\Administrator\\Desktop\\装拆工作单模板.xls";
-//        String fileName = "C:\\Users\\Administrator\\Desktop\\测试结果" + System.currentTimeMillis() + ".xls";
-        String fileName = "C:\\Users\\Administrator\\Desktop\\测试结果1608692656434.xls";
+        String fileName = "C:\\Users\\Administrator\\Desktop\\测试结果" + System.currentTimeMillis() + ".xls";
+//        String fileName = "C:\\Users\\Administrator\\Desktop\\测试结果1608692656434.xls";
         //测试sheet
         // 方案2 分多次 填充 会使用文件缓存（省内存）
-        FillConfig fillConfig = FillConfig.builder().forceNewRow(Boolean.TRUE).build();
+        FillConfig fillConfig = FillConfig.builder().forceNewRow(Boolean.FALSE).build();
         ExcelWriter excelWriter = EasyExcel.write(fileName).withTemplate(templateFileName).build();
+//        FillWrapper fillWrapper = new FillWrapper(meterVOList);
         WriteSheet writeSheet = EasyExcel.writerSheet("sheet0").build();
-        excelWriter.fill(meterVOList, fillConfig, writeSheet);
-        excelWriter.fill(equipmentPrintVO, writeSheet);
+//        excelWriter.fill(equipmentPrintVO, writeSheet);
+        excelWriter.fill(meterVOList,fillConfig, writeSheet);
         // 千万别忘记关闭流
         excelWriter.finish();
         System.out.println("debug");
