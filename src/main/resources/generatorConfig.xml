@@ -19,10 +19,16 @@
         </commentGenerator>
 
         <!--jdbc的数据库连接 -->
+<!--        <jdbcConnection driverClass="com.mysql.jdbc.Driver"-->
+<!--                        connectionURL="jdbc:mysql://168.168.0.63:8036/jwd_iec"-->
+<!--                        userId="syni_iec"-->
+<!--                        password="syni_iec@12345">-->
+<!--        </jdbcConnection>-->
+
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://168.168.0.63:8036/jwd_iec"
-                        userId="syni_iec"
-                        password="syni_iec@12345">
+                        connectionURL="jdbc:mysql://168.168.3.187:3306/mdd_sjb"
+                        userId="syni_mdd_dev"
+                        password="123456">
         </jdbcConnection>
 
 
@@ -68,6 +74,6 @@
         <!--tableName:指定了表名
             domainObjectName:指定了实体类的名称
         -->
-        <table tableName="iec_elec_bill_details" domainObjectName="IecElecBillDetails"/>
+        <table tableName="wx_community_help" domainObjectName="WxCommunityHelp"/>
     </context>
 </generatorConfiguration>
