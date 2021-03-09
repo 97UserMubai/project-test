@@ -1,10 +1,11 @@
-import net.sf.cglib.core.Local;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author wangbaitao
@@ -112,6 +113,78 @@ public class DateTest {
         LocalDate localDate1 = localDate.plusMonths(10);
         System.out.println(StringUtils.leftPad(String.valueOf(localDate1.getMonthValue()), 2, '0'));
 
+    }
+
+    @Test
+    public void testTemps() {
+        LocalDateTime localDateTime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.MAX);
+        System.out.println(localDateTime.toEpochSecond(OffsetDateTime.now().getOffset()));
+        LocalDateTime localDateTime1 = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.MIN);
+        System.out.println(localDateTime1.toEpochSecond(OffsetDateTime.now().getOffset()));
+    }
+
+    @Test
+    public void testDate() {
+        LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(1614700800, 0,
+                OffsetDateTime.now().getOffset());
+        System.out.println(localDateTime.toString());
+    }
+
+    @Test
+    public void test10() {
+        long endDaySeconds = LocalDateTime.now().toEpochSecond(OffsetDateTime.now().getOffset());
+        System.out.println(endDaySeconds);
+        long beginDaySeconds = LocalDateTime.now().minusDays(1).toEpochSecond(OffsetDateTime.now().getOffset());
+        System.out.println(beginDaySeconds);
+    }
+
+    @Test
+    public void test22() {
+        List<String> testList = new ArrayList<>();
+        for (int i = 0; i < 19; i++) {
+            testList.add("test" + 12);
+        }
+        List<List<String>> result = split(testList, 20);
+        System.out.println("debug");
+    }
+
+
+    /**
+     * 拆分集合
+     *
+     * @param <T>
+     * @param resList 要拆分的集合
+     * @param count   每个集合的元素个数
+     * @return 返回拆分后的各个集合
+     */
+    private <T> List<List<T>> split(List<T> resList, int count) {
+        if (resList == null || count < 1)
+            return null;
+        List<List<T>> ret = new ArrayList<List<T>>();
+        int size = resList.size();
+        if (size <= count) { //数据量不足count指定的大小
+            ret.add(resList);
+        } else {
+            int pre = size / count;
+            int last = size % count;
+            //前面pre个集合，每个大小都是count个元素
+            for (int i = 0; i < pre; i++) {
+                List<T> itemList = new ArrayList<T>();
+                for (int j = 0; j < count; j++) {
+                    itemList.add(resList.get(i * count + j));
+                }
+                ret.add(itemList);
+            }
+            //last的进行处理
+            if (last > 0) {
+                List<T> itemList = new ArrayList<T>();
+                for (int i = 0; i < last; i++) {
+                    itemList.add(resList.get(pre * count + i));
+                }
+                ret.add(itemList);
+            }
+        }
+        return ret;
     }
 
 }

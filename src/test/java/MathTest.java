@@ -61,4 +61,11 @@ public class MathTest {
             }
         }
     }
+
+    @Test
+    public void test5(){
+        Long chatCnt = 0L;
+        Double replayCnt = 1.0;
+        System.out.println(replayCnt/chatCnt);
+    }
 }
